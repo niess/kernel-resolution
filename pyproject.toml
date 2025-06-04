@@ -1,0 +1,47 @@
+[build-system]
+requires = ["setuptools", "setuptools-rust"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "kernel-resolution"
+authors = [
+    {name = "Valentin Niess", email = "valentin.niess@gmail.com"}
+]
+description = "Utilities for applying a resolution function to bare values."
+readme = "README.md"
+license = { text = "LGPL-3.0-or-later" }
+keywords = ["Python", "Kernel", "Resolution"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Physics"
+]
+version = "0.1.0"
+requires-python = ">=3.7.0"
+dependencies = [
+    "numpy >= 1.6.0",
+]
+
+[project.urls]
+source = "https://github.com/niess/kernel-resolution"
+
+[tool.setuptools.packages.find]
+where = ["src/python"]
+
+[[tool.setuptools-rust.ext-modules]]
+target = "kernel_resolution.kernel_resolution"
+
+# Build options for wheels.
+[tool.cibuildwheel.linux]
+before-all = """
+curl -sSf https://sh.rustup.rs -o rustup.sh && \
+sh rustup.sh -y
+"""
+repair-wheel-command = """
+auditwheel repair -w {dest_dir} {wheel}\
+"""
+build = "cp38-manylinux_*"
+environment = "PATH=$HOME/.cargo/bin:$PATH"
+manylinux-x86_64-image = "manylinux2014"
+
+[tool.cibuildwheel.macos]
+build = "cp38-macosx_*"
